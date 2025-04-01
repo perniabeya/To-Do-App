@@ -11,9 +11,15 @@ import com.example.to_do_app.data.TaskDAO
 import com.example.to_do_app.databinding.ActivityTaskBinding
 
 class TaskActivity : AppCompatActivity() {
+
+    companion object {
+        const val TASK_ID = "TASK_ID"
+    }
+
     lateinit var binding: ActivityTaskBinding
 
     lateinit var taskDAO: TaskDAO
+    lateinit var task: Task
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,14 +34,27 @@ class TaskActivity : AppCompatActivity() {
             insets
         }
 
+        val id = intent.getLongExtra(TASK_ID, -1L)
+
         taskDAO = TaskDAO(this)
+
+        if (id != -1L) {
+            task = taskDAO.findById(id)!!
+            binding.titleEditText.setText(task.title)
+        } else {
+            task = Task(-1L, "")
+        }
 
         binding.saveButton.setOnClickListener {
             val title = binding.titleEditText.text.toString()
 
-            val task = Task(-1L, title)
+            task.title = title
 
-            taskDAO.insert(task)
+            if (task.id != -1L) {
+                taskDAO.update(task)
+            } else {
+                taskDAO.insert(task)
+            }
 
             finish()
         }

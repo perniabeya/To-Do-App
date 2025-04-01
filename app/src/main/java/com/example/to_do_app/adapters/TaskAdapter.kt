@@ -6,8 +6,14 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.to_do_app.data.Task
 import com.example.to_do_app.databinding.ItemTaskBinding
+import com.example.to_do_app.utils.addStrikethrough
 
-class TaskAdapter(var items: List<Task>, val onClick: (Int) -> Unit) : Adapter<TaskViewHolder>() {
+class TaskAdapter(
+var items: List<Task>,
+val onClick: (Int) -> Unit,
+val onDelete: (Int) -> Unit,
+val onCheck: (Int) -> Unit
+) : Adapter<TaskViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,6 +28,14 @@ class TaskAdapter(var items: List<Task>, val onClick: (Int) -> Unit) : Adapter<T
         holder.itemView.setOnClickListener {
             onClick(position)
         }
+        holder.binding.deleteButton.setOnClickListener {
+            onDelete(position)
+        }
+        holder.binding.doneCheckBox.setOnCheckedChangeListener { _, _ ->
+            if (holder.binding.doneCheckBox.isPressed) {
+                onCheck(position)
+            }
+        }
     }
 
     fun updateItems(items: List<Task>) {
@@ -33,7 +47,11 @@ class TaskAdapter(var items: List<Task>, val onClick: (Int) -> Unit) : Adapter<T
 class TaskViewHolder(val binding: ItemTaskBinding) : ViewHolder(binding.root) {
 
     fun render(task: Task) {
-        binding.titleTextView.text = task.title
+        if (task.done) {
+            binding.titleTextView.text = task.title.addStrikethrough()
+        } else {
+            binding.titleTextView.text = task.title
+        }
         binding.doneCheckBox.isChecked = task.done
     }
 }
