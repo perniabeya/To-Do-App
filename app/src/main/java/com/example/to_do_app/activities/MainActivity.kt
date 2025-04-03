@@ -1,5 +1,3 @@
-package com.example.to_do_app.activities
-
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -9,18 +7,22 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.to_do_app.R
-import com.example.to_do_app.data.Task
-import com.example.to_do_app.adapters.TaskAdapter
-import com.example.to_do_app.data.TaskDAO
+import com.example.to_do_app.activities.CategoryActivity
+import com.example.to_do_app.activities.TaskListActivity
+import com.example.to_do_app.adapters.CategoryAdapter
+import com.example.to_do_app.data.Category
+import com.example.to_do_app.data.CategoryDAO
 import com.example.to_do_app.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
+
     lateinit var binding: ActivityMainBinding
 
-    lateinit var taskDAO: TaskDAO
-    lateinit var taskList: List<Task>
+    lateinit var categoryDAO: CategoryDAO
+    lateinit var categoryList: List<Category>
 
-    lateinit var adapter: TaskAdapter
+    lateinit var adapter: CategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,29 +37,16 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        taskDAO = TaskDAO(this)
+        categoryDAO = CategoryDAO(this)
 
-        adapter = TaskAdapter(emptyList(), ::editTask, ::deleteTask, ::checkTask)
+        supportActionBar?.title = "Mis Categorías"
 
-        /*  adapter = TaskAdapter(emptyList(), { position ->
-            val task = taskList[position]
-
-            val intent = Intent(this, TaskActivity::class.java)
-            intent.putExtra(TaskActivity.TASK_ID, task.id)
-            startActivity(intent)
-        }, { position ->
-            val task = taskList[position]
-
-            taskDAO.delete(task)
-
-            refreshData()
-        })
-        */
+        adapter = CategoryAdapter(emptyList(), ::showCategory, ::editCategory, ::deleteCategory)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 
-        binding.addTaskButton.setOnClickListener {
-            val intent = Intent(this, TaskActivity::class.java)
+        binding.addCategoryButton.setOnClickListener {
+            val intent = Intent(this, CategoryActivity::class.java)
             startActivity(intent)
         }
     }
@@ -69,34 +58,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun refreshData() {
-        taskList = taskDAO.findAll()
-        adapter.updateItems(taskList)
+        categoryList = categoryDAO.findAll()
+        adapter.updateItems(categoryList)
     }
 
-    fun checkTask(position: Int) {
-        val task = taskList[position]
+    fun showCategory(position: Int) {
+        val category = categoryList[position]
 
-        task.done = !task.done
-        taskDAO.update(task)
-        refreshData()
-    }
-
-    fun editTask(position: Int) {
-        val task = taskList[position]
-
-        val intent = Intent(this, TaskActivity::class.java)
-        intent.putExtra(TaskActivity.TASK_ID, task.id)
+        val intent = Intent(this, TaskListActivity::class.java)
+        intent.putExtra(TaskListActivity.CATEGORY_ID, category.id)
         startActivity(intent)
     }
 
-    fun deleteTask(position: Int) {
-        val task = taskList[position]
+    fun editCategory(position: Int) {
+        val category = categoryList[position]
+
+        val intent = Intent(this, CategoryActivity::class.java)
+        intent.putExtra(CategoryActivity.CATEGORY_ID, category.id)
+        startActivity(intent)
+    }
+
+    fun deleteCategory(position: Int) {
+        val category = categoryList[position]
 
         AlertDialog.Builder(this)
-            .setTitle("Delete task")
-            .setMessage("Are you sure you want to delete this task?")
+            .setTitle("Delete category")
+            .setMessage("Are you sure you want to delete this category?")
             .setPositiveButton(android.R.string.ok) { _, _ ->
-                taskDAO.delete(task)
+                categoryDAO.delete(category)
                 refreshData()
             }
             .setNegativeButton(android.R.string.cancel, null)
