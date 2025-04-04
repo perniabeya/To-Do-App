@@ -12,8 +12,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="15dp"
         tools:text="Category name"
+        android:textColor="@color/category_name"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"/>
 
     <Button

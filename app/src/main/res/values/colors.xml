@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="category">#01332A</color>
+    <color name="category_name">#004D40</color>
+    <color name="task">#1F2657</color>
+    <color name="task_name">#3F51B5</color>
+
 </resources>
