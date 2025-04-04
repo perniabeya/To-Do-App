@@ -1,5 +1,4 @@
 package com.example.to_do_app.data
-
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
